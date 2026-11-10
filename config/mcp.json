@@ -1,0 +1,41 @@
+{
+  "mcpServers": {
+    "wiki": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "WIKI_MCP_TOKEN",
+        "adobe-wiki-confluence"
+      ]
+    },
+    "github": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "-e",
+        "GITHUB_API_BASE_URL",
+        "corp-github"
+      ]
+    },
+    "jira": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "JIRA_EMAIL",
+        "-e",
+        "JIRA_PERSONAL_ACCESS_TOKEN",
+        "corp-jira"
+      ]
+    }
+  }
+}

@@ -1,0 +1,1585 @@
+/* =========================================================================
+ * Adobe AI Assistant — styles.css
+ * -------------------------------------------------------------------------
+ *  1. Design Tokens (light)
+ *  2. Dark Mode Overrides
+ *  3. Base + Typography
+ *  4. App Shell
+ *  5. Sidebar
+ *  6. Main Column + Glass Header
+ *  7. Conversation Stream
+ *  8. Messages (asymmetric user / assistant)
+ *  9. Assistant Prose
+ * 10. Code Block Chrome
+ * 11. Welcome Hero + Suggestion Chips
+ * 12. Onboarding Quiz
+ * 13. Composer
+ * 14. Theme Toggle
+ * 15. Loading Indicators
+ * 16. Scrollbars + Misc
+ * ========================================================================= */
+
+
+/* =========================================================================
+ * 1. Design Tokens (light)
+ *    Semantic tokens are the public API for every component.
+ *    Raw scales (neutral-*, red-*) are internal — only tokens consume them.
+ * ========================================================================= */
+:root {
+  color-scheme: light;
+
+  /* Neutral scale — Zinc */
+  --neutral-0:   #ffffff;
+  --neutral-50:  #fafafa;
+  --neutral-100: #f4f4f5;
+  --neutral-200: #e4e4e7;
+  --neutral-300: #d4d4d8;
+  --neutral-400: #a1a1aa;
+  --neutral-500: #71717a;
+  --neutral-600: #52525b;
+  --neutral-700: #3f3f46;
+  --neutral-800: #27272a;
+  --neutral-900: #18181b;
+  --neutral-950: #09090b;
+
+  /* Brand — tonal red around Adobe Corporate Red #ED1C24 */
+  --red-50:  #fff1f2;
+  --red-100: #ffe4e6;
+  --red-200: #fecdd3;
+  --red-500: #ed1c24;
+  --red-600: #c80a13;
+  --red-700: #a3080f;
+
+  /* Surfaces + text */
+  --bg-canvas:   var(--neutral-50);
+  --bg-surface:  var(--neutral-0);
+  --bg-elevated: var(--neutral-0);
+  --bg-sunken:   var(--neutral-100);
+
+  --fg-primary:   var(--neutral-900);
+  --fg-secondary: var(--neutral-700);
+  --fg-muted:     var(--neutral-500);
+  --fg-on-accent: #ffffff;
+
+  --border-subtle:  var(--neutral-200);
+  --border-default: var(--neutral-300);
+  --border-strong:  var(--neutral-400);
+
+  /* Accent */
+  --accent-default: var(--red-500);
+  --accent-hover:   var(--red-600);
+  --accent-pressed: var(--red-700);
+  --accent-subtle:  var(--red-50);
+  --accent-ring:    rgba(237, 28, 36, 0.20);
+
+  /* Link accent — a slightly darker red for in-text links so they
+     don't halate on white. Dark mode softens it to a warm coral. */
+  --fg-link:       var(--red-600);
+  --fg-link-hover: var(--red-700);
+
+  /* Radius */
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  14px;
+  --radius-xl:  18px;
+  --radius-2xl: 22px;
+
+  /* Shadow */
+  --shadow-xs: 0 1px 2px rgba(17, 24, 39, 0.04);
+  --shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.06), 0 1px 3px rgba(17, 24, 39, 0.04);
+  --shadow-md: 0 4px 12px -2px rgba(17, 24, 39, 0.08), 0 2px 4px rgba(17, 24, 39, 0.04);
+  --shadow-lg: 0 10px 30px -6px rgba(17, 24, 39, 0.10), 0 2px 6px rgba(17, 24, 39, 0.04);
+  --shadow-inset-highlight: none;
+
+  /* Motion */
+  --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.30, 1);
+  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 320ms;
+
+  /* Glass + atmospheric */
+  --glass-bg:    rgba(255, 255, 255, 0.72);
+  --hero-glow-a: rgba(237, 28, 36, 0.05);
+  --hero-glow-b: rgba(99, 102, 241, 0.04);
+
+  /* Generic hover overlay — theme-neutral, works on any surface */
+  --hover-overlay: rgba(0, 0, 0, 0.05);
+
+  /* Layout */
+  --stream-max-w: 960px;       /* outer conversation column */
+  --prose-max-w: 76ch;         /* assistant reading column */
+  --sidebar-w: 272px;
+}
+
+
+/* =========================================================================
+ * 2. Dark Mode Overrides
+ *    Elevation comes from color layering + hairline borders + inner highlights,
+ *    not inverted shadows.
+ * ========================================================================= */
+.dark {
+  color-scheme: dark;
+
+  /* Layered greys, never pure black. Canvas is the darkest layer; every
+     "surface" (bubbles, code blocks, sidebars) sits at least one step
+     lifted so it actually reads against the page. */
+  --bg-canvas:   #0f0f12;
+  --bg-surface:  #1f1f23;
+  --bg-elevated: #2a2a2e;
+  --bg-sunken:   #19191c;
+
+  /* Softer off-white text — drops contrast from 21:1 to ~11:1,
+     still AAA but far easier on the eyes. */
+  --fg-primary:   var(--neutral-300);
+  --fg-secondary: var(--neutral-400);
+  --fg-muted:     #8a8a92;
+
+  --border-subtle:  rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.10);
+  --border-strong:  rgba(255, 255, 255, 0.16);
+
+  /* Desaturated red to prevent halation on pure black */
+  --accent-default: #f03a42;
+  --accent-hover:   #ed1c24;
+  --accent-pressed: #c80a13;
+  --accent-subtle:  rgba(240, 58, 66, 0.10);
+  --accent-ring:    rgba(240, 58, 66, 0.28);
+
+  /* Warm coral for in-text links — avoids the "fire-engine" glare of
+     pure red on dark surfaces. */
+  --fg-link:       #ec7b82;
+  --fg-link-hover: #f29a9f;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.30);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.40);
+  --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.50), 0 2px 4px rgba(0, 0, 0, 0.30);
+  --shadow-lg: 0 12px 32px -12px rgba(0, 0, 0, 0.60), 0 2px 6px rgba(0, 0, 0, 0.40);
+  --shadow-inset-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  --glass-bg:    rgba(31, 31, 35, 0.72);
+  --hero-glow-a: rgba(37, 99, 235, 0.03);
+  --hero-glow-b: rgba(240, 58, 66, 0.03);
+
+  --hover-overlay: rgba(255, 255, 255, 0.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-base: 0ms;
+    --dur-slow: 0ms;
+  }
+}
+
+
+/* =========================================================================
+ * 3. Base + Typography
+ * ========================================================================= */
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  background: var(--bg-canvas);
+  color: var(--fg-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-feature-settings: 'cv11', 'ss01';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-ring);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+
+/* =========================================================================
+ * 4. App Shell
+ *    Full-width top bar, then a flex row for sidebar + main content below.
+ * ========================================================================= */
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  flex-shrink: 0;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px;
+  background: var(--glass-bg);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid var(--border-subtle);
+  z-index: 20;
+}
+.app-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.app-header-mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  /* Match the assistant monogram: light face in light, white in dark,
+     so the red Adobe "A" always reads clearly against its tile. */
+  background: var(--neutral-900);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    var(--shadow-xs),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+.dark .app-header-mark {
+  background: var(--neutral-50);
+  box-shadow:
+    var(--shadow-xs),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+.app-header-spacer { flex: 1; }
+.app-header-title {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--fg-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+
+/* =========================================================================
+ * 5. Sidebar
+ * ========================================================================= */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--bg-sunken);
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  padding: 14px 12px;
+  gap: 14px;
+  transition: transform var(--dur-base) var(--ease-out-quad);
+}
+
+/* Mobile drawer: slide in from the left as an overlay on small screens. */
+@media (max-width: 1023px) {
+  .sidebar {
+    position: fixed;
+    top: 54px;                 /* below the app-header */
+    left: 0;
+    bottom: 0;
+    width: min(290px, 80vw);
+    z-index: 60;
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-lg);
+  }
+  body.sidebar-open .sidebar { transform: translateX(0); }
+}
+
+/* Backdrop for the mobile drawer */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 54px 0 0 0;           /* below the app-header */
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-out-quad);
+}
+@media (max-width: 1023px) {
+  body.sidebar-open .sidebar-backdrop {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.btn-new-chat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--fg-primary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: var(--shadow-xs), var(--shadow-inset-highlight);
+  transition:
+    background var(--dur-fast) var(--ease-out-quad),
+    border-color var(--dur-fast) var(--ease-out-quad);
+}
+.btn-new-chat:hover {
+  background: var(--bg-elevated);
+  border-color: var(--border-default);
+}
+.btn-new-chat .plus {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  background: var(--accent-default);
+  color: var(--fg-on-accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+}
+/* Footer variant — pinned to bottom of sidebar with a subtle divider above. */
+.sidebar-section--footer {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+.sidebar-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 10px 10px 6px;
+}
+.sidebar-history {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+.history-item {
+  position: relative;
+  padding: 8px 10px 8px 12px;
+  text-align: left;
+  font-size: 13px;
+  color: var(--fg-secondary);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition:
+    background var(--dur-fast) var(--ease-out-quad),
+    color var(--dur-fast) var(--ease-out-quad);
+}
+.history-item:hover {
+  background: var(--bg-elevated);
+  color: var(--fg-primary);
+}
+.history-item.active {
+  background: var(--bg-elevated);
+  color: var(--fg-primary);
+}
+.history-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--accent-default);
+}
+.history-item:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.history-item.active {
+  cursor: default;
+}
+
+.sidebar-empty-hint {
+  padding: 10px 12px 4px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--fg-muted);
+  margin: 0;
+}
+
+/* Quick links — external shortcuts, subtle ghost buttons */
+.sidebar-links {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.quick-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  text-decoration: none;
+  color: var(--fg-secondary);
+  font-size: 13px;
+  border-radius: var(--radius-sm);
+  transition:
+    background var(--dur-fast) var(--ease-out-quad),
+    color var(--dur-fast) var(--ease-out-quad);
+}
+.quick-link:hover {
+  background: var(--hover-overlay);
+  color: var(--fg-primary);
+}
+.quick-link-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg-muted);
+}
+.quick-link-icon svg { width: 15px; height: 15px; }
+.quick-link:hover .quick-link-icon { color: var(--fg-secondary); }
+
+.quick-link > span:not(.quick-link-icon) {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.quick-link-arrow {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  color: var(--fg-muted);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out-quad);
+}
+.quick-link:hover .quick-link-arrow { opacity: 1; }
+
+
+/* =========================================================================
+ * 6. Main Column
+ * ========================================================================= */
+.main-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, var(--hero-glow-a), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, var(--hero-glow-b), transparent 55%),
+    var(--bg-canvas);
+}
+
+/* =========================================================================
+ * Follow-up suggestions — shown below each assistant message
+ * ========================================================================= */
+.followup-row {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  padding: 0 0 8px 0;
+}
+
+.followup-btn {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  text-align: left;
+  padding: 9px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-canvas);
+  font-size: 0.78rem;
+  color: var(--fg-secondary);
+  cursor: pointer;
+  line-height: 1.45;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  transition: background var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast);
+}
+.followup-btn:hover {
+  background: var(--bg-raised);
+  border-color: var(--accent-default);
+  color: var(--fg-base);
+}
+
+/* Sidebar hamburger — shown only at narrow widths, lives in the top header. */
+.sidebar-toggle {
+  display: none;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  color: var(--fg-secondary);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out-quad);
+}
+.sidebar-toggle:hover { background: var(--bg-sunken); }
+@media (max-width: 1023px) {
+  .sidebar-toggle { display: inline-flex; }
+}
+
+
+/* =========================================================================
+ * 7. Conversation Stream
+ * ========================================================================= */
+#messages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding: 28px 24px 24px;
+}
+/* Scroll buffer — only present while we're awaiting an answer, so a newly
+   posted question can be scrolled to the top of the viewport regardless of
+   how short the previous answer was. Once the answer arrives, the buffer
+   collapses so there's no permanent empty space below the latest reply. */
+#messages::after {
+  content: '';
+  display: block;
+  min-height: 0;
+  flex-shrink: 0;
+}
+#messages.awaiting-answer::after {
+  min-height: 60vh;
+}
+#messages > * {
+  width: 100%;
+  max-width: var(--stream-max-w);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+/* =========================================================================
+ * 8. Messages (asymmetric user / assistant)
+ * -------------------------------------------------------------------------
+ *  .msg           — shared wrapper
+ *  .msg-user      — right-aligned tinted bubble, no avatar
+ *  .msg-assistant — avatar + role label + borderless prose
+ * ========================================================================= */
+.msg {
+  animation: msgFadeIn var(--dur-slow) var(--ease-out-expo) both;
+}
+.msg-user     { animation-duration: 180ms; }
+.msg-assistant { animation-delay: 60ms; }
+@keyframes msgFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* --- User --- */
+.msg-user {
+  display: flex;
+  justify-content: flex-end;
+}
+.msg-user .bubble {
+  max-width: min(75%, 640px);
+  padding: 10px 14px;
+  background: var(--bg-sunken);
+  color: var(--fg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl) var(--radius-xl) 4px var(--radius-xl);
+  font-size: 14px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  box-shadow: var(--shadow-xs);
+}
+
+/* --- Assistant --- */
+.msg-assistant {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.msg-assistant .msg-avatar-col {
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+.msg-assistant .msg-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.msg-assistant .bubble {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: var(--fg-primary);
+  font-size: 15px;
+  line-height: 1.65;
+  max-width: var(--prose-max-w);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-wrap: pretty;
+}
+
+
+/* =========================================================================
+ * 9. Avatar — Adobe Monogram
+ * ========================================================================= */
+.avatar-adobe {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--neutral-900);
+  --avatar-hex-bg: var(--neutral-900);
+  color: var(--accent-default);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    var(--shadow-xs),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+.dark .avatar-adobe {
+  background: var(--neutral-50);
+  --avatar-hex-bg: var(--neutral-50);
+  box-shadow:
+    var(--shadow-xs),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+.avatar-adobe--lg {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+}
+.avatar-adobe--lg svg { width: 26px; height: 26px; }
+.avatar-adobe svg { width: 20px; height: 20px; }
+
+
+/* =========================================================================
+ * 10. Assistant Prose (bubble content)
+ * ========================================================================= */
+.bubble p            { margin: 0 0 0.75em; }
+.bubble p:last-child { margin-bottom: 0; }
+
+/* Any first child (heading, list, table, code, mermaid) should start flush
+   with the top of the bubble so the assistant avatar optically aligns with
+   the first line of text. */
+.bubble > *:first-child { margin-top: 0; }
+
+/* Tailwind's preflight strips list-style; reinstate it inside the bubble
+   so bullets and numbers actually render. */
+.bubble ul,
+.bubble ol {
+  margin: 0.5em 0 0.75em;
+  padding-left: 1.6em;
+}
+.bubble ul                  { list-style: disc outside; }
+.bubble ul ul               { list-style: circle outside; }
+.bubble ul ul ul            { list-style: square outside; }
+.bubble ol                  { list-style: decimal outside; }
+.bubble ol ol               { list-style: lower-alpha outside; }
+.bubble li                  { margin: 0.25em 0; padding-left: 0.15em; }
+.bubble li::marker          { color: var(--fg-muted); }
+
+/* GFM task lists — hide the bullet when the item contains a checkbox,
+   otherwise we get a bullet AND a checkbox side-by-side. */
+.bubble li:has(> input[type="checkbox"]) {
+  list-style: none;
+  margin-left: -1.3em;
+}
+.bubble input[type="checkbox"] {
+  margin-right: 8px;
+  vertical-align: -1px;
+  accent-color: var(--accent-default);
+}
+
+.bubble h1,
+.bubble h2,
+.bubble h3 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 1em 0 0.4em;
+}
+.bubble h1 { font-size: 1.25em; }
+.bubble h2 { font-size: 1.1em; }
+.bubble h3 { font-size: 1em; }
+
+.bubble a {
+  color: var(--fg-link);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  word-break: break-all;
+}
+.bubble a:hover { color: var(--fg-link-hover); }
+
+.bubble code {
+  background: var(--bg-sunken);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--fg-primary);
+  border: 1px solid var(--border-subtle);
+}
+
+.bubble blockquote {
+  border-left: 3px solid var(--border-default);
+  padding: 0.1em 0 0.1em 0.9em;
+  margin: 0.8em 0;
+  color: var(--fg-secondary);
+  font-style: italic;
+}
+
+.bubble table {
+  display: table;
+  width: 100%;
+  table-layout: auto;
+  /* Use border-collapse: separate + overflow: hidden so the border-radius
+     actually clips the corners (collapse breaks rounded corners). */
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 0.8em 0;
+  font-size: 0.92em;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.bubble th,
+.bubble td {
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0.5em 0.8em;
+  text-align: left;
+}
+.bubble th {
+  background: var(--bg-sunken);
+  font-weight: 600;
+  color: var(--fg-primary);
+}
+.bubble tr:last-child th,
+.bubble tr:last-child td { border-bottom: 0; }
+
+/* Prose-level wrapping (overflow-wrap: anywhere + word-break: break-word)
+   makes sense for long URLs in paragraphs but breaks ordinary words like
+   "closed" when the browser is auto-fitting a narrow table column.
+   Override inside cells: break only at word boundaries. */
+.bubble th,
+.bubble td {
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+/* Short-token links (e.g. "#52", "PR-123") should never split mid-token. */
+.bubble th a,
+.bubble td a {
+  word-break: normal;
+  white-space: nowrap;
+}
+
+/* Mermaid diagrams */
+.mermaid-block {
+  position: relative;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 18px 14px;
+  margin: 0.9em 0;
+  overflow-x: auto;
+  text-align: center;
+  cursor: zoom-in;
+  transition:
+    border-color var(--dur-fast) var(--ease-out-quad),
+    box-shadow var(--dur-fast) var(--ease-out-quad);
+}
+.mermaid-block:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-sm);
+}
+.mermaid-block .expand-hint {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--bg-sunken);
+  border: 1px solid var(--border-subtle);
+  color: var(--fg-muted);
+  font-size: 10px;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease-out-quad);
+}
+.mermaid-block:hover .expand-hint { opacity: 1; }
+.mermaid-block .expand-hint svg { width: 11px; height: 11px; }
+.mermaid-block svg {
+  display: block;
+  margin: 0 auto;                 /* classic block centering */
+  max-width: 100%;
+  height: auto;
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Soften Mermaid's default hard-edged rectangles and thin strokes so
+   flowcharts feel in-keeping with the rest of the UI. */
+.mermaid-block .node rect,
+.mermaid-block .node polygon {
+  rx: 6;
+  ry: 6;
+}
+.mermaid-block .edgePath .path,
+.mermaid-block .flowchart-link {
+  stroke-width: 1.4px;
+}
+.mermaid-block .cluster rect {
+  rx: 8;
+  ry: 8;
+}
+.mermaid-block .label,
+.mermaid-block .nodeLabel,
+.mermaid-block .edgeLabel {
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif !important;
+  font-weight: 500;
+}
+
+
+/* =========================================================================
+ * 11. Code Block Chrome
+ * ========================================================================= */
+.bubble pre {
+  position: relative;
+  background: var(--neutral-900);
+  color: var(--neutral-100);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin: 0.9em 0;
+  padding: 0;
+  font-size: 13px;
+  box-shadow: var(--shadow-inset-highlight);
+}
+.dark .bubble pre { background: var(--bg-sunken); }
+
+.pre-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px 6px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+}
+.pre-lang {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+}
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  border: 0;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-out-quad),
+    color var(--dur-fast) var(--ease-out-quad);
+}
+.copy-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+}
+.copy-btn svg { width: 12px; height: 12px; }
+
+.bubble pre > code {
+  display: block;
+  padding: 12px 14px;
+  background: transparent;
+  color: inherit;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88em;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre;
+  border: 0;
+}
+
+
+/* =========================================================================
+ * 12. Welcome Hero + Suggestion Chips
+ * ========================================================================= */
+.welcome-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 40px 12px 20px;
+}
+.welcome-hero h1 {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--fg-primary);
+  margin: 14px 0 6px;
+}
+.welcome-hero p {
+  font-size: 14px;
+  color: var(--fg-muted);
+  max-width: 460px;
+}
+
+.chip-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 26px;
+  width: 100%;
+  max-width: 640px;
+}
+@media (max-width: 520px) {
+  .chip-grid { grid-template-columns: 1fr; }
+}
+
+.chip {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  text-align: left;
+  font-size: 13px;
+  color: var(--fg-primary);
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-out-quad),
+    border-color var(--dur-fast) var(--ease-out-quad),
+    box-shadow var(--dur-fast) var(--ease-out-quad),
+    transform var(--dur-fast) var(--ease-out-quad);
+}
+.chip:hover {
+  background: var(--bg-elevated);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+.chip .icon {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--bg-sunken);
+  color: var(--fg-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-subtle);
+}
+.chip .icon svg { width: 15px; height: 15px; }
+
+
+/* =========================================================================
+ * 13. Onboarding Quiz
+ * ========================================================================= */
+.quiz {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 40px 12px 20px;
+}
+.quiz .step {
+  font-size: 11px;
+  color: var(--fg-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 14px;
+}
+.quiz h2 {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 6px 0 4px;
+  color: var(--fg-primary);
+}
+.quiz .options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 18px;
+  width: 100%;
+  max-width: 560px;
+}
+@media (max-width: 520px) {
+  .quiz .options { grid-template-columns: 1fr; }
+}
+.quiz .option {
+  padding: 12px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  text-align: left;
+  font-size: 13px;
+  color: var(--fg-primary);
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-out-quad),
+    border-color var(--dur-fast) var(--ease-out-quad),
+    box-shadow var(--dur-fast) var(--ease-out-quad),
+    transform var(--dur-fast) var(--ease-out-quad);
+}
+.quiz .option:hover {
+  background: var(--bg-elevated);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+.quiz .progress {
+  display: flex;
+  gap: 6px;
+  margin-top: 18px;
+}
+.quiz .progress .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border-default);
+  transition: background var(--dur-base) var(--ease-out-quad);
+}
+.quiz .progress .dot.active { background: var(--accent-default); }
+
+
+/* Scroll-to-latest floating pill — sits just above the composer, never
+   over the message stream. Lives inside .composer-wrap (which is
+   position: relative) so `bottom: 100%` anchors it to the composer's top. */
+.scroll-to-latest {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px 6px 10px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--fg-primary);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 6;
+  transition:
+    opacity var(--dur-base) var(--ease-out-quad),
+    transform var(--dur-base) var(--ease-out-expo);
+}
+.scroll-to-latest.visible {
+  opacity: 0.75;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+.scroll-to-latest.visible:hover {
+  opacity: 1;
+  background: var(--bg-surface);
+  border-color: var(--border-default);
+}
+
+
+/* =========================================================================
+ * 14. Composer  (Phase 4)
+ *
+ *   ┌──────────────────────────────────────────────────────────┐
+ *   │  [textarea auto-grows 1–8 lines]                         │
+ *   │                                                          │
+ *   │  [📎]                   [0/4000] [Claude Opus ▾]  [↑]   │
+ *   └──────────────────────────────────────────────────────────┘
+ * ========================================================================= */
+.composer-wrap {
+  position: relative;
+  padding: 8px 24px 20px;
+}
+.composer-wrap::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 48px;
+  pointer-events: none;
+  background: linear-gradient(to top, var(--bg-canvas), transparent);
+}
+.composer-inner {
+  width: 100%;
+  max-width: var(--stream-max-w);
+  margin: 0 auto;
+}
+
+.composer {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 8px 10px 8px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-sm), var(--shadow-inset-highlight);
+  transition:
+    border-color var(--dur-fast) var(--ease-out-quad),
+    box-shadow var(--dur-base) var(--ease-out-quad);
+}
+.composer:focus-within {
+  border-color: var(--border-strong);
+  box-shadow:
+    0 0 0 3px var(--accent-ring),
+    var(--shadow-md),
+    var(--shadow-inset-highlight);
+}
+
+.composer textarea {
+  flex: 1;
+  display: block;
+  width: 100%;
+  resize: none;
+  border: 0;
+  outline: none;
+  background: transparent;
+  padding: 7px 0;
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--fg-primary);
+  min-height: 24px;
+  max-height: 200px;
+}
+.composer textarea::placeholder { color: var(--fg-muted); }
+
+/* Small attribution credit shown below the composer. */
+.composer-credit {
+  margin: 6px 6px 0 0;
+  font-size: 11px;
+  font-style: italic;
+  color: var(--fg-muted);
+  text-align: right;
+  letter-spacing: 0.01em;
+  opacity: 0.75;
+  user-select: none;
+}
+
+.send-btn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-sunken);
+  color: var(--fg-muted);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    background var(--dur-base) var(--ease-out-quad),
+    color var(--dur-fast) var(--ease-out-quad),
+    border-color var(--dur-fast) var(--ease-out-quad),
+    transform 100ms var(--ease-out-quad),
+    filter var(--dur-fast) var(--ease-out-quad);
+}
+.send-btn:disabled { cursor: not-allowed; }
+.send-btn.has-content {
+  background: linear-gradient(135deg, var(--accent-default), var(--accent-hover));
+  color: var(--fg-on-accent);
+  border-color: transparent;
+}
+.send-btn.has-content:hover:not(:disabled) {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+.send-btn.has-content:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
+}
+
+
+/* =========================================================================
+ * 15. Theme Toggle
+ * ========================================================================= */
+.theme-toggle {
+  display: inline-flex;
+  padding: 3px;
+  background: var(--bg-sunken);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  box-shadow: var(--shadow-inset-highlight);
+}
+.theme-toggle button {
+  width: 30px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  color: var(--fg-muted);
+  cursor: pointer;
+  transition:
+    color var(--dur-fast) var(--ease-out-quad),
+    background var(--dur-fast) var(--ease-out-quad);
+}
+.theme-toggle button:hover:not(.active) {
+  background: var(--hover-overlay);
+  color: var(--fg-secondary);
+}
+.theme-toggle button.active {
+  background: var(--bg-elevated);
+  color: var(--fg-primary);
+  box-shadow:
+    var(--shadow-xs),
+    inset 0 0 0 1px var(--border-subtle);
+}
+
+/* View Transitions for theme swap */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 260ms;
+  animation-timing-function: var(--ease-out-expo);
+}
+
+
+/* =========================================================================
+ * 16. Loading Indicators
+ *     - dots:           small 3-dot bounce (used for prompt-loader)
+ *     - skel-lines:     shimmering skeleton (assistant "thinking")
+ *     - streaming-caret: blinking caret (for token streaming — future)
+ *     - tool-chips:     inline tool-use status chips above assistant answer
+ *     - top-progress:   thin indeterminate bar across top of viewport
+ * ========================================================================= */
+.dots span {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin: 0 2px;
+  background: var(--fg-muted);
+  border-radius: 50%;
+  animation: blink 1.2s infinite ease-in-out;
+}
+.dots span:nth-child(2) { animation-delay: 0.2s; }
+.dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0.3; transform: scale(0.9); }
+  40%           { opacity: 1;   transform: scale(1); }
+}
+
+/* Adobe facts ticker shown during thinking state - subdued, "background processing" feel */
+.fact-ticker {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  opacity: 0.72;
+}
+.fact-ticker__label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg-muted);
+  opacity: 0.85;
+  white-space: nowrap;
+}
+.fact-ticker__body {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  /* Clip the slide animation so text doesn't bleed out */
+  overflow: hidden;
+}
+.fact-ticker__text {
+  color: var(--fg-muted);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  font-weight: 400;
+  flex: 1;
+  min-width: 0;
+  /* Default settled state for the cross-fade-slide */
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+  will-change: opacity, transform;
+}
+.fact-ticker__text--exiting {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+.fact-ticker__text--entering {
+  opacity: 0;
+  transform: translateY(10px);
+  /* Snap to start state without animating, so the subsequent class removal animates in */
+  transition: none;
+}
+.fact-ticker__dots {
+  flex-shrink: 0;
+  align-self: center;
+  margin-top: 2px;
+}
+.fact-ticker__dots span {
+  width: 4px;
+  height: 4px;
+  opacity: 0.6;
+}
+
+/* --------------------------------------------------------------------------
+ * Assistant answer reveal — block-by-block "unfolding" so the response
+ * appears gradually instead of slamming onto the screen all at once.
+ * Each top-level child of an assistant .bubble (and each <li> for lists)
+ * gets .reveal-unit with a staggered transition-delay set inline by JS.
+ * ------------------------------------------------------------------------ */
+.reveal-unit {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.75s ease-out, transform 0.75s ease-out;
+  will-change: opacity, transform;
+}
+.reveal-unit--in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Follow-up suggestion chips fade in after the answer has unfolded. */
+.followup-row--revealing {
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+.followup-row--revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-unit,
+  .reveal-unit--in,
+  .followup-row--revealing,
+  .followup-row--revealed {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* Streaming caret */
+.streaming-caret::after {
+  content: '▍';
+  color: var(--accent-default);
+  margin-left: 1px;
+  animation: caretBlink 1.1s ease-in-out infinite;
+}
+@keyframes caretBlink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+
+/* Tool-use chips (rendered above the assistant's answer) */
+.tool-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.tool-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px 3px 8px;
+  background: var(--bg-sunken);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  font-size: 11px;
+  color: var(--fg-secondary);
+}
+.tool-chip svg { width: 11px; height: 11px; color: var(--accent-default); }
+
+/* Global top progress bar */
+.top-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 1000;
+  pointer-events: none;
+  background: var(--accent-subtle);
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 150ms var(--ease-out-quad);
+}
+.top-progress.active { opacity: 1; }
+.top-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 30%;
+  background: var(--accent-default);
+  animation: topProgressSlide 1.4s linear infinite;
+}
+@keyframes topProgressSlide {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+
+
+/* =========================================================================
+ * 17. Lightbox (expanded diagram view)
+ * ========================================================================= */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+.lightbox.active { display: flex; }
+
+.lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: lightboxFadeIn var(--dur-base) var(--ease-out-expo);
+}
+.lightbox-frame {
+  position: relative;
+  width: min(1280px, 92vw);
+  height: min(860px, 88vh);
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  animation: lightboxPopIn var(--dur-base) var(--ease-out-expo);
+}
+@keyframes lightboxFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes lightboxPopIn {
+  from { opacity: 0; transform: scale(0.98) translateY(4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.lightbox-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-sunken);
+}
+.lightbox-btn {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--fg-secondary);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out-quad);
+}
+.lightbox-btn:hover {
+  background: var(--bg-elevated);
+  color: var(--fg-primary);
+}
+.lightbox-zoom {
+  min-width: 48px;
+  text-align: center;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  color: var(--fg-secondary);
+  font-variant-numeric: tabular-nums;
+}
+.lightbox-spacer { flex: 1; }
+
+.lightbox-stage {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--bg-surface);
+}
+.lightbox-stage svg {
+  max-width: none;
+  max-height: none;
+  transform-origin: center center;
+  transition: transform var(--dur-base) var(--ease-out-quad);
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* =========================================================================
+ * 18. Scrollbars + Misc
+ * ========================================================================= */
+#messages::-webkit-scrollbar,
+.sidebar-history::-webkit-scrollbar { width: 8px; }
+#messages::-webkit-scrollbar-thumb,
+.sidebar-history::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  background-clip: content-box;
+  border: 2px solid transparent;
+  border-radius: 4px;
+}
+#messages::-webkit-scrollbar-thumb:hover,
+.sidebar-history::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+  background-clip: content-box;
+}

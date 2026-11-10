@@ -1,0 +1,37 @@
+{
+  "team": "Falcons",
+  "wikis": [
+    {
+      "title": "Falcons Dev Onboarding and Workstation Setup",
+      "url": "https://wiki.corp.adobe.com/pages/viewpage.action?spaceKey=acp&title=Falcons+Dev+Onboarding+and+Workstation+Setup"
+    },
+    {
+      "title": "Quota Enforcement Service Architecture",
+      "url": "https://wiki.corp.adobe.com/pages/viewpage.action?spaceKey=acp&title=Quota+Enforcement+Service+Architecture"
+    },
+    {
+      "title": "QES Dev Onboarding and Workstation Setup",
+      "url": "https://wiki.corp.adobe.com/pages/viewpage.action?spaceKey=acp&title=QES+Dev+Onboarding+and+Workstation+Setup"
+    },
+    {
+      "title": "Access Control for Team Members",
+      "url": "https://wiki.corp.adobe.com/spaces/acp/pages/2274729663/Access+Control+for+Team+Members"
+    },
+    {
+      "title": "Albatross Readiness Playbook",
+      "url": "https://wiki.corp.adobe.com/spaces/acp/pages/3390406383/Albatross+Readiness+Playbook"
+    },
+    {
+      "title": "Onboarding Plan for New Joinees to Falcons",
+      "url": "https://wiki.corp.adobe.com/spaces/acp/pages/2393212651/Onboarding+Plan+for+New+Joinees+to+Falcons"
+    }
+  ],
+  "starter_prompts": [
+    { "icon": "🦅", "text": "Walk me through the Falcons dev onboarding and workstation setup" },
+    { "icon": "⚙️",  "text": "What are the Post-Buster setup steps for Falcons?" },
+    { "icon": "🏗️", "text": "Explain the Quota Enforcement Service architecture" },
+    { "icon": "🔀", "text": "Which existing APIs were migrated from HS to QES?" },
+    { "icon": "🧑‍💻", "text": "How do I onboard as a QES dev — full workstation setup?" },
+    { "icon": "🧭", "text": "Compare Falcons vs QES onboarding — what's different?" }
+  ]
+}
