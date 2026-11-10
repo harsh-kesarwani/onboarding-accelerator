@@ -14,7 +14,7 @@ Powered by **Claude Opus on AWS Bedrock** and **MCP servers** for each internal 
 
 ### Prerequisites
 
-- **Python 3.9+**
+- **Python 3.10+**
 - **Docker** (running) — the MCP servers run as containers
 - **Built MCP images** — from [adobe-mcp-servers](https://github.com/Adobe-AIFoundations/adobe-mcp-servers):
   - `adobe-wiki-confluence` (build from `src/adobe-wiki`)
@@ -95,7 +95,7 @@ python3 -m uvicorn main:app --reload --port 8000
 ├── mcp_hub.py           # MCP server lifecycle + tool routing
 ├── requirements.txt
 ├── .env                 # Your credentials (gitignored)
-├── .env.example         # Template
+├── .env.example         # Credential template with dummy values
 ├── config/              # JSON configuration (data only)
 │   ├── mcp.json         # MCP server definitions (Cursor/Claude Desktop schema)
 │   └── onboarding.json  # Team-specific onboarding data (wikis, prompts)

@@ -2,4 +2,4 @@ fastapi
 uvicorn
 boto3
 python-dotenv
-mcp
+mcp==2.3.0

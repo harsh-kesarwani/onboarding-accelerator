@@ -76,7 +76,7 @@ class MCPHub:
                 "toolSpec": {
                     "name": prefixed,
                     "description": (tool.description or "")[:_MAX_TOOL_DESCRIPTION_LEN],
-                    "inputSchema": {"json": tool.inputSchema},
+                    "inputSchema": {"json": tool.input_schema},
                 }
             })
 
