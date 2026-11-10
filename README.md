@@ -1,16 +1,8 @@
-# hkesarwa — AI Week April 2026
+## Onboarding Accelerator
 
-## Project Title
-
-Onboarding Accelerator
-
-## Description
-
-An AI teammate for new Adobe engineers that turns your team's Wiki, GitHub, and Jira into one conversational source of truth — answering questions  with live, grounded data instead of stale snippets.
+An AI teammate for new engineers that turns your team's Wiki, GitHub, and Jira into one conversational source of truth — answering questions  with live, grounded data instead of stale snippets.
 
 Powered by **Claude Opus on AWS Bedrock** and **MCP servers** for each internal system, with a FastAPI backend and chat UI. Drop in a small JSON config and the assistant instantly speaks your team's stack — so new joinees ramp in days, not weeks.
-
-## How to Use
 
 ### Prerequisites
 
@@ -82,8 +74,6 @@ python3 -m uvicorn main:app --reload --port 8000
 - UI: [http://localhost:8000](http://localhost:8000)
 - Health check: [http://localhost:8000/healthz](http://localhost:8000/healthz) — should return `{"status": "ok", "tools": <N>}` where `N > 0`.
 
-## Artifacts
-
 ### Project Structure
 
 ```
@@ -134,7 +124,7 @@ All tunables are env-driven via `settings.py`. Defaults are sensible; override i
 | `MAX_TOKENS` | `4096` |
 | `SYSTEM_PROMPT` | (defined in `settings.py`) |
 
-## Resources
+### Resources
 
 Presentations, videos, and demos are in [`Onboarding-Accelerator/resources/`](resources):
 
